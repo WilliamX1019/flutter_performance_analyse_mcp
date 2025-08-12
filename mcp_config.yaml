@@ -1,0 +1,40 @@
+version: 1
+agents:
+  - name: PerfAgent
+    description: 帧率采集与分析
+    tools: [CollectTimeline, AnalyzeFPS]
+    entry: agents/perf_agent.py
+
+  - name: LeakAgent
+    description: 内存泄漏采集与分析
+    tools: [DumpHeap, AnalyzeLeaks]
+    entry: agents/leak_agent.py
+
+workflow:
+  - name: fps_workflow
+    description: 独立帧率检测流程
+    steps:
+      - step: "收集帧率数据"
+        agent: PerfAgent
+      - step: "分析帧率曲线"
+        agent: PerfAgent
+        inputs:
+          timeline_file: "timeline.json"
+      - step: "输出帧率优化报告"
+        agent: Gemini
+        inputs:
+          report_template: "templates/fps_report.md"
+
+  - name: leak_workflow
+    description: 独立内存泄漏检测流程
+    steps:
+      - step: "导出 Heap Snapshot"
+        agent: LeakAgent
+      - step: "分析内存泄漏"
+        agent: LeakAgent
+        inputs:
+          heap_snapshot_file: "heap.json"
+      - step: "输出内存泄漏报告"
+        agent: Gemini
+        inputs:
+          report_template: "templates/leak_report.md"
