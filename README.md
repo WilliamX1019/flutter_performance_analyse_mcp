@@ -24,6 +24,11 @@ mcp run mcp_config.yaml -w fps_workflow
 ```bash
 mcp run mcp_config.yaml -w leak_workflow
 ```
+```bash
+mcp run mcp_config.yaml -w startup_workflow
+```
+
+
 ## 查看结果
 优化报告会自动生成在：
 ```

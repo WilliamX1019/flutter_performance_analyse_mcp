@@ -10,6 +10,16 @@ agents:
     tools: [DumpHeap, AnalyzeLeaks]
     entry: agents/leak_agent.py
 
+  - name: StartupAgent
+    description: 应用启动耗时分析
+    tools: [CollectStartupData, AnalyzeStartupTime]
+    entry: agents/startup_agent.py
+
+  - name: OptimizerAgent
+    description: 整合报告并生成综合优化方案
+    tools: [ConsolidateReports]
+    entry: agents/optimizer_agent.py
+
 workflow:
   - name: fps_workflow
     description: 独立帧率检测流程
@@ -38,3 +48,33 @@ workflow:
         agent: Gemini
         inputs:
           report_template: "templates/leak_report.md"
+
+  - name: startup_workflow
+    description: 独立启动耗时分析流程
+    steps:
+      - step: "收集启动数据"
+        agent: StartupAgent
+      - step: "分析启动耗时"
+        agent: StartupAgent
+        inputs:
+          timeline_file: "timeline.json"
+      - step: "输出启动优化报告"
+        agent: Gemini
+        inputs:
+          report_template: "templates/startup_report.md"
+          startup_analysis: "{{steps[1].output.startup_analysis}}"
+        # 添加此行，确保启动报告被保存到文件
+        output_file: "output/startup_report.md"
+
+  - name: optimization_workflow
+    description: 基于所有分析报告生成综合优化方案
+    steps:
+      - step: "整合分析报告"
+        agent: OptimizerAgent
+      - step: "生成综合优化方案"
+        agent: Gemini
+        inputs:
+          prompt_template: "templates/optimization_plan_prompt.md"
+          report_context: "{{steps[0].output.consolidated_reports}}"
+        # 将最终的综合方案保存到文件
+        output_file: "output/comprehensive_optimization_plan.md"
