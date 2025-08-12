@@ -2,7 +2,7 @@ version: 1
 agents:
   - name: PerfAgent
     description: 帧率采集与分析
-    tools: [CollectTimeline, AnalyzeFPS]
+    tools: [CollectTimeline, AnalyzeFPSPrecise]
     entry: agents/perf_agent.py
 
   - name: LeakAgent
