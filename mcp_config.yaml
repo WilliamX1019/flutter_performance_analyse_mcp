@@ -33,7 +33,9 @@ workflow:
       - step: "输出帧率优化报告"
         agent: Gemini
         inputs:
-          report_template: "templates/fps_report.md"
+          # The analyze_fps_precise tool generates a full report. We use Gemini to pass it to the output file.
+          prompt: "{{steps[1].output.fps_analysis}}"
+        output_file: "output/fps_precise_report.md"
 
   - name: leak_workflow
     description: 独立内存泄漏检测流程
@@ -48,6 +50,8 @@ workflow:
         agent: Gemini
         inputs:
           report_template: "templates/leak_report.md"
+          leak_analysis: "{{steps[1].output.leak_analysis}}"
+        output_file: "output/leak_precise_report.md"
 
   - name: startup_workflow
     description: 独立启动耗时分析流程

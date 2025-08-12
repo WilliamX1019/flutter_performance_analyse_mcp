@@ -1,12 +1,18 @@
 from tools.dump_heap import dump_heap
-from tools.analyze_leak_precise import analyze_leak_precise
+from tools.analyze_leaks import generate_leak_report
 
 class LeakAgent:
     def run(self, step, inputs):
+        """
+        Executes a step in the memory leak analysis workflow.
+        """
         if step == "导出 Heap Snapshot":
-            # 假设dump_heap会输出固定路径文件，比如 'heap.json'
-            dump_heap()  
+            print("[LeakAgent] 开始导出 Heap Snapshot...")
+            dump_heap()
+            return {"status": "success", "output_file": "heap.json"}
+            
         elif step == "分析内存泄漏":
-            # 从inputs中拿heap快照文件路径，默认用dump_heap的输出路径
-            heap_snapshot_file = inputs.get("heap_snapshot_file", "heap.json")
-            analyze_leak_precise(heap_snapshot_file)
+            heap_file = inputs.get("heap_snapshot_file", "heap.json")
+            print(f"[LeakAgent] 开始分析文件: {heap_file}")
+            analysis_result = generate_leak_report(heap_file)
+            return {"leak_analysis": analysis_result}

@@ -76,15 +76,10 @@ def analyze_fps_precise(timeline_file):
     print("[AnalyzeFPS] 查找慢帧中...")
     slow_frames = find_slow_frames(timeline)
     print(f"[AnalyzeFPS] 找到 {len(slow_frames)} 个慢帧")
-
     print("[AnalyzeFPS] 生成报告中...")
     report = generate_report(slow_frames)
-
-    os.makedirs("output", exist_ok=True)
-    output_path = os.path.join("output", "fps_precise_report.md")
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(report)
-    print(f"[AnalyzeFPS] 精确帧率分析报告已生成：{output_path}")
+    print("[AnalyzeFPS] 精确帧率分析报告已生成。")
+    return report
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
