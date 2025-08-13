@@ -26,11 +26,13 @@ agents:
     entry: agents/package_size_agent.py
 
 workflow:
-  - name: fps_workflow
-    description: 独立帧率检测流程
+  - name: fps_workflow_impeller
+    description: 独立帧率检测流程 (使用 Impeller 渲染后端)
     steps:
       - step: "收集帧率数据"
         agent: PerfAgent
+        inputs:
+          renderer: "impeller"
       - step: "分析帧率曲线"
         agent: PerfAgent
         inputs:
@@ -38,9 +40,27 @@ workflow:
       - step: "输出帧率优化报告"
         agent: Gemini
         inputs:
-          # The analyze_fps_precise tool generates a full report. We use Gemini to pass it to the output file.
-          prompt: "{{steps[1].output.fps_analysis}}"
-        output_file: "output/fps_precise_report.md"
+          report_template: "templates/fps_report.md"
+          fps_analysis: "{{steps[1].output.fps_analysis}}"
+        output_file: "output/fps_report.md"
+
+  - name: fps_workflow_skia
+    description: 独立帧率检测流程 (使用 Skia 渲染后端)
+    steps:
+      - step: "收集帧率数据"
+        agent: PerfAgent
+        inputs:
+          renderer: "skia"
+      - step: "分析帧率曲线"
+        agent: PerfAgent
+        inputs:
+          timeline_file: "timeline.json"
+      - step: "输出帧率优化报告"
+        agent: Gemini
+        inputs:
+          report_template: "templates/fps_report.md"
+          fps_analysis: "{{steps[1].output.fps_analysis}}"
+        output_file: "output/fps_report.md"
 
   - name: leak_workflow
     description: 独立内存泄漏检测流程
@@ -56,13 +76,14 @@ workflow:
         inputs:
           report_template: "templates/leak_report.md"
           leak_analysis: "{{steps[1].output.leak_analysis}}"
-        output_file: "output/leak_precise_report.md"
 
-  - name: startup_workflow
-    description: 独立启动耗时分析流程
+  - name: startup_workflow_impeller
+    description: 独立启动耗时分析流程 (使用 Impeller 渲染后端)
     steps:
       - step: "收集启动数据"
         agent: StartupAgent
+        inputs:
+          renderer: "impeller"
       - step: "分析启动耗时"
         agent: StartupAgent
         inputs:
@@ -73,6 +94,24 @@ workflow:
           report_template: "templates/startup_report.md"
           startup_analysis: "{{steps[1].output.startup_analysis}}"
         # 添加此行，确保启动报告被保存到文件
+        output_file: "output/startup_report.md"
+
+  - name: startup_workflow_skia
+    description: 独立启动耗时分析流程 (使用 Skia 渲染后端)
+    steps:
+      - step: "收集启动数据"
+        agent: StartupAgent
+        inputs:
+          renderer: "skia"
+      - step: "分析启动耗时"
+        agent: StartupAgent
+        inputs:
+          timeline_file: "timeline.json"
+      - step: "输出启动优化报告"
+        agent: Gemini
+        inputs:
+          report_template: "templates/startup_report.md"
+          startup_analysis: "{{steps[1].output.startup_analysis}}"
         output_file: "output/startup_report.md"
   # 分析应用包大小
   - name: package_size_apk_workflow

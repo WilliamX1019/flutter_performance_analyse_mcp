@@ -7,10 +7,9 @@ class StartupAgent:
         Executes a step in the startup analysis workflow.
         """
         if step == "收集启动数据":
-            # The default command in collect_timeline is sufficient for startup analysis
-            # as it includes --trace-startup.
-            print("[StartupAgent] 开始收集启动性能数据...")
-            collect_timeline()
+            # 从输入中获取渲染器类型，默认为 'impeller'
+            renderer = inputs.get('renderer', 'impeller')
+            collect_timeline(renderer=renderer)
             return {"status": "success", "output_file": "timeline.json"}
             
         elif step == "分析启动耗时":

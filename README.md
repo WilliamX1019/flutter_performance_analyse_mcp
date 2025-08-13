@@ -39,25 +39,31 @@
     pip install -r requirements.txt
     ```
 
-3.  **在 VS Code 中配置 Gemini**
-    您需要告诉 Gemini 扩展去使用本项目的 `mcp_config.yaml` 配置文件。
+3.  **在您的 Flutter 项目中配置 Gemini**
+    这是推荐的设置方式，让您可以在自己的项目环境中直接运行分析。
 
-    *   在 VS Code 中打开克隆下来的项目文件夹。
-    *   打开设置 (`Ctrl/Cmd + ,`)，搜索 `gemini.experimental.mcpConfigPath`。
-    *   将其值设置为 `${workspaceFolder}/mcp_config.yaml`。这会自动指向当前项目根目录下的配置文件。
+    *   在 VS Code 中打开您**自己的 Flutter 项目**。
+    *   在项目根目录创建 `.vscode/settings.json` 文件（如果它不存在）。
+    *   添加以下配置，将 `<path-to-this-toolkit>` 替换为您克隆本工具包的**绝对路径**。
+      ```json
+      {
+        "gemini.experimental.mcp": true,
+        "gemini.experimental.mcpConfigPath": "<path-to-this-toolkit>/mcp_config.yaml"
+      }
+      ```
     *   确保 `gemini.experimental.mcp` 选项已勾选启用。
 
 ## 运行工作流
 
-**重要提示**: 请在您**想要分析的 Flutter 项目的根目录**下运行以下所有 `mcp` 命令。
+**重要提示**: 完成上述配置后，您就可以在您的 Flutter 项目根目录下，通过 VS Code 终端直接运行以下命令。
 
 ### 1. 运行独立的分析工作流
 
-您可以独立运行每一个分析任务。`<path-to-this-toolkit>` 是您存放本分析工具的路径。
-
-*   **分析帧率**: `mcp run <path-to-this-toolkit>/mcp_config.yaml -w fps_workflow`
+*   **分析帧率 (Impeller)**: `mcp run -w fps_workflow_impeller`
+*   **分析帧率 (Skia)**: `mcp run -w fps_workflow_skia`
 *   **分析内存泄漏**: `mcp run <path-to-this-toolkit>/mcp_config.yaml -w leak_workflow`
-*   **分析启动时间**: `mcp run <path-to-this-toolkit>/mcp_config.yaml -w startup_workflow`
+*   **分析启动时间 (Impeller)**: `mcp run -w startup_workflow_impeller`
+*   **分析启动时间 (Skia)**: `mcp run -w startup_workflow_skia`
 *   **分析包大小 (APK)**: `mcp run <path-to-this-toolkit>/mcp_config.yaml -w package_size_apk_workflow`
 *   *(其他包大小工作流: `package_size_aab_workflow`, `package_size_ipa_workflow`)*
 
@@ -66,7 +72,7 @@
 在运行了任意一个或多个独立分析后，您可以运行 `optimization_workflow` 来获得一份由 AI 生成的、整合所有信息的综合优化方案。
 
 ```bash
-mcp run <path-to-this-toolkit>/mcp_config.yaml -w optimization_workflow
+mcp run -w optimization_workflow
 ```
 
 ## 查看结果
