@@ -10,7 +10,10 @@ def consolidate_reports(output_dir="output"):
     report_files = [
         "fps_precise_report.md",
         "leak_precise_report.md",
-        "startup_report.md"
+        "startup_report.md",
+        "apk_size_report.md",
+        "aab_size_report.md",
+        "ipa_size_report.md"
     ]
     
     for filename in report_files:

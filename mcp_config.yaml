@@ -20,6 +20,11 @@ agents:
     tools: [ConsolidateReports]
     entry: agents/optimizer_agent.py
 
+  - name: PackageSizeAgent
+    description: 分析应用包大小 (APK, AAB, IPA)
+    tools: [AnalyzePackageSize]
+    entry: agents/package_size_agent.py
+
 workflow:
   - name: fps_workflow
     description: 独立帧率检测流程
@@ -69,7 +74,49 @@ workflow:
           startup_analysis: "{{steps[1].output.startup_analysis}}"
         # 添加此行，确保启动报告被保存到文件
         output_file: "output/startup_report.md"
+  # 分析应用包大小
+  - name: package_size_apk_workflow
+    description: 独立的应用包大小分析流程 (APK)
+    steps:
+      - step: "分析应用包大小"
+        agent: PackageSizeAgent
+        inputs:
+          platform: "apk"
+      - step: "输出包大小优化报告"
+        agent: Gemini
+        inputs:
+          report_template: "templates/apk_size_report.md"
+          package_size_analysis: "{{steps[0].output.package_size_analysis}}"
+        output_file: "output/apk_size_report.md"
 
+  - name: package_size_aab_workflow
+    description: 独立的应用包大小分析流程 (AAB)
+    steps:
+      - step: "分析应用包大小"
+        agent: PackageSizeAgent
+        inputs:
+          platform: "aab"
+      - step: "输出包大小优化报告"
+        agent: Gemini
+        inputs:
+          report_template: "templates/aab_size_report.md"
+          package_size_analysis: "{{steps[0].output.package_size_analysis}}"
+        output_file: "output/aab_size_report.md"
+
+  - name: package_size_ipa_workflow
+    description: 独立的应用包大小分析流程 (IPA)
+    steps:
+      - step: "分析应用包大小"
+        agent: PackageSizeAgent
+        inputs:
+          platform: "ipa"
+      - step: "输出包大小优化报告"
+        agent: Gemini
+        inputs:
+          report_template: "templates/ipa_size_report.md"
+          package_size_analysis: "{{steps[0].output.package_size_analysis}}"
+        output_file: "output/ipa_size_report.md"
+  # 综合优化工作流，收尾工作
   - name: optimization_workflow
     description: 基于所有分析报告生成综合优化方案
     steps:
@@ -81,4 +128,4 @@ workflow:
           prompt_template: "templates/optimization_plan_prompt.md"
           report_context: "{{steps[0].output.consolidated_reports}}"
         # 将最终的综合方案保存到文件
-        output_file: "output/comprehensive_optimization_plan.md"
+        output_file: "output/comprehensive_optimization_plan.md"      
