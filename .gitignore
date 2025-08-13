@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+.env/
+
+# VSCode local settings
+.vscode/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Flutter specific build/cache files
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+*.iml
+
+# Output files from this tool
+timeline.json
+heap.json
+output/
