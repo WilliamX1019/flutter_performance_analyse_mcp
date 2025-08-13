@@ -76,9 +76,3 @@ def analyze_fps_precise(timeline_file):
     report = generate_report(slow_frames, all_events)
     print("[AnalyzeFPS] 精确帧率分析报告已生成。")
     return report
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("用法: python analyze_fps_precise.py timeline.json")
-        sys.exit(1)
-    analyze_fps_precise(sys.argv[1])

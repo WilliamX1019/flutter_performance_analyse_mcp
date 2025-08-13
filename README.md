@@ -61,10 +61,10 @@
 
 *   **分析帧率 (Impeller)**: `mcp run -w fps_workflow_impeller`
 *   **分析帧率 (Skia)**: `mcp run -w fps_workflow_skia`
-*   **分析内存泄漏**: `mcp run <path-to-this-toolkit>/mcp_config.yaml -w leak_workflow`
+*   **分析内存泄漏**: `mcp run -w leak_workflow`
 *   **分析启动时间 (Impeller)**: `mcp run -w startup_workflow_impeller`
 *   **分析启动时间 (Skia)**: `mcp run -w startup_workflow_skia`
-*   **分析包大小 (APK)**: `mcp run <path-to-this-toolkit>/mcp_config.yaml -w package_size_apk_workflow`
+*   **分析包大小 (APK)**: `mcp run -w package_size_apk_workflow`
 *   *(其他包大小工作流: `package_size_aab_workflow`, `package_size_ipa_workflow`)*
 
 ### 2. 生成综合 AI 优化报告 (推荐)

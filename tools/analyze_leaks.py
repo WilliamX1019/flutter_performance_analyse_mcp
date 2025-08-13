@@ -31,20 +31,22 @@ def analyze_heap(heap_data):
     if not vertices:
         return "无法分析内存：Heap Snapshot 中未找到对象数据 (vertices)。"
 
-    # 1. 按实例数量分析
-    class_counts = Counter(v.get("class_name") for v in vertices if v.get("class_name"))
-    leaked_candidates = {cls: count for cls, count in class_counts.items() if cls in SUSPICIOUS_CLASSES and count > 0}
-    common_safe_classes = {'String', 'int', 'double', '_List', '_Map', 'bool'}
-    top_objects = {cls: count for cls, count in class_counts.most_common(10) if cls not in common_safe_classes and not cls.startswith('_')}
-
-    # 2. 按保留大小分析 (新增)
-    # 按类名聚合总保留大小
+    # 1. & 2. 在单次循环中同时分析实例数量和保留大小
+    class_counts = Counter()
     class_retained_size = Counter()
     for v in vertices:
         class_name = v.get("class_name")
-        if class_name and class_name not in common_safe_classes and not class_name.startswith('_'):
+        if not class_name:
+            continue
+        
+        class_counts[class_name] += 1
+        
+        if class_name not in common_safe_classes and not class_name.startswith('_'):
             class_retained_size[class_name] += v.get("retained_size_bytes", 0)
-    
+
+    leaked_candidates = {cls: count for cls, count in class_counts.items() if cls in SUSPICIOUS_CLASSES and count > 0}
+    common_safe_classes = {'String', 'int', 'double', '_List', '_Map', 'bool'}
+    top_objects = {cls: count for cls, count in class_counts.most_common(10) if cls not in common_safe_classes and not cls.startswith('_')}
     top_retained_size_objects = class_retained_size.most_common(5)
 
     report_lines = []

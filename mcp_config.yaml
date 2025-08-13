@@ -76,6 +76,7 @@ workflow:
         inputs:
           report_template: "templates/leak_report.md"
           leak_analysis: "{{steps[1].output.leak_analysis}}"
+        output_file: "output/leak_report.md"
 
   - name: startup_workflow_impeller
     description: 独立启动耗时分析流程 (使用 Impeller 渲染后端)
